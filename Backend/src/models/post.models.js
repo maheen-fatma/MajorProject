@@ -8,4 +8,4 @@ const postSchema = new mongoose.Schema({
     content: { type: String, required: true },
 },{timestamp:true})
 
-export const post = mongoose.model("Post", postSchema)
+export const Post = mongoose.model("Post", postSchema)
