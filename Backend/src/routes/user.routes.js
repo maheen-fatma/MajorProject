@@ -6,4 +6,4 @@ router.route("/register").post(
     upload.single('avatar'), // Single file upload
     registerUser
 );
-export default router
+export default router;
