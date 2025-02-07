@@ -54,4 +54,63 @@ const registerUser = asyncHandler ( async (req,res)=>{
     
 })
 
-export {registerUser}
+const generateAccessAndRefreshToken = async(userId)=>{
+    try {
+        const user = await User.findById(userId)
+        const accessToken = user.generateAccessToken()
+        const refreshToken = user.generateRefreshToken()
+        //store refresh token in the database
+        user.refreshToken = refreshToken
+        await user.save({validateBeforeSave:false})
+        return {accessToken, refreshToken}
+    } catch (error) {
+        throw new ApiError(500, "Issue in generating Access and Refresh Tokens")
+    }
+}
+
+const loginUser = asyncHandler (async(req,res)=>{
+    const {username, email, password} = req.body
+
+    if(!(username || email)){
+        throw new ApiError(400, "Either username or email is required to login")
+    }
+
+    const user = await User.findOne({
+        $or: [{username},{email}]
+    })
+
+    if(!user){
+        throw new ApiError(401, "User does not exist. Please check the username or email entered and try again")
+    }
+
+    const isPasswordValid = await user.isPasswordCorrect(password)
+    if(!isPasswordValid){
+        throw new ApiError(401, "Invalid password!")
+    }
+
+    //generate access and refresh token
+    const {accessToken,refreshToken} = await generateAccessAndRefreshToken(user._id)
+
+    const options = { //since cookies are modifiable at the frontend
+        httpOnly: true,
+        secure:true
+    }
+    return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(new ApiResponse(
+        200,
+        {
+            user,
+            accessToken,
+            refreshToken
+        },
+        "User logged in successfully"
+    ))
+})
+
+export {
+    registerUser,
+    loginUser,
+}
