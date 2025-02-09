@@ -210,6 +210,50 @@ const updateAccountDetails = asyncHandler( async (req,res)=>{
     return res.status(200).json( new ApiResponse(200, user, "Account details updated successfully"))
 })
 
+const deleteImageCloudinary = async (publicId) => {
+    try {
+      const result = await cloudinary.uploader.destroy(publicId);
+      console.log("Deleted Image:", result);
+    } catch (error) {
+      console.error("Error deleting image:", error);
+    }
+  };
+const updateUserAvatar = asyncHandler( async (req,res) => {
+    //retrieve public id of old avatar
+    const avatarUrlOld  = req.user?.avatar 
+    const parts = avatarUrlOld.split('/')
+    const filename = parts[parts.length-1]
+    const publicIdOld = filename.split('.')[0]
+
+
+    //get the local path of the avatar as taken from form by mukter and stored in local directory
+    const avatarLocalPath = req.file?.path
+    if(!avatarLocalPath){
+        throw new ApiError(400, "Avatar file is missing")
+    }
+
+    //upload to cloudinary
+    const avatar = await uploadOnCloudinary(avatarLocalPath)
+    if(!avatar.url) {
+        throw new ApiError(400, "error while uploading an avatar")
+    }
+
+    //delete old image
+    deleteImageCloudinary(publicIdOld)
+
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                avatar: avatar.url
+            }
+        },
+        {new:true}
+    ).select("-password")
+    return res.status(200).json(new ApiResponse(200, user, "CoverImage updated successfully"))
+
+})
+
 export {
     registerUser,
     loginUser,
@@ -217,5 +261,6 @@ export {
     refreshAccessToken,
     changePassword,
     getCurrentUser,
-    updateAccountDetails
+    updateAccountDetails,
+    updateUserAvatar
 }
