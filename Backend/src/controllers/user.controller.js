@@ -3,7 +3,7 @@ import {ApiError} from "../utils/ApiError.js"
 import { User } from "../models/user.model.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js";
-
+import { v2 as cloudinary} from 'cloudinary'
 
 const registerUser = asyncHandler ( async (req,res)=>{
     
@@ -193,8 +193,9 @@ const getCurrentUser = asyncHandler (async(req,res)=>{
 const updateAccountDetails = asyncHandler( async (req,res)=>{
     //req.user contains the user logged in
     const {fullName, username} = req.body
-    if(!(fullName && username)) throw new ApiError(400, "Field required")
-    const user = await User.findById(
+    
+    if(!(fullName || username)) throw new ApiError(400, "Field required")
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set:{
@@ -227,7 +228,7 @@ const updateUserAvatar = asyncHandler( async (req,res) => {
 
 
     //get the local path of the avatar as taken from form by mukter and stored in local directory
-    const avatarLocalPath = req.file?.path
+    const avatarLocalPath = req.file?.path // uploaded via multer earlier
     if(!avatarLocalPath){
         throw new ApiError(400, "Avatar file is missing")
     }
@@ -250,7 +251,7 @@ const updateUserAvatar = asyncHandler( async (req,res) => {
         },
         {new:true}
     ).select("-password")
-    return res.status(200).json(new ApiResponse(200, user, "CoverImage updated successfully"))
+    return res.status(200).json(new ApiResponse(200, user, "Avatar updated successfully"))
 
 })
 
