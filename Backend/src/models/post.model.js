@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import { Schema } from "mongoose";
 const postSchema = new mongoose.Schema({
     owner: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     purchaseLink: { type: String, default: '' },
