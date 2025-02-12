@@ -70,8 +70,7 @@ const generateAccessAndRefreshToken = async(userId)=>{
 
 const loginUser = asyncHandler ( async (req,res)=>{
     const {email, username, password} = req.body
-    console.log(username);
-
+    
     if (!username && !email) {
         throw new ApiError(400, "username or email is required")
     }
@@ -183,6 +182,8 @@ const changePassword = asyncHandler( async (req,res)=>{
 })
 
 const getCurrentUser = asyncHandler (async(req,res)=>{
+    console.log("In get current user controller");
+    
     return res
     .status(200)
     .json(

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Input, Button, Logo } from '../components'
-import { useDispatch } from 'react-redux'
+//import { useDispatch } from 'react-redux'
 import { useState } from 'react'
 import authService from '../appwrite/auth'
 import { login } from '../store/authSlice'
@@ -8,20 +8,36 @@ import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 function SignUp() {
   const navigate= useNavigate()
-  const [name, setName] = useState('')
+  //const dispatch = useDispatch()
+
+  const [fullName, setFullName] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
+  const [avatar, setAvatar] = useState(null)
   const [error, setError] = useState('')
-  const dispatch = useDispatch()
+
+  const handleFileChange = (e) => {
+    setAvatar(e.target.files[0]); 
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
     try{
-      const session= await authService.createAccount({email, password, name})
+      const formData = new FormData(); // form data since we are using multipart for including a file as well
+      formData.append("fullName", fullName);
+      formData.append("username", username);
+      formData.append("email", email);
+      formData.append("password", password);
+      if (avatar) formData.append("avatar", avatar);
+
+      const session= await authService.createAccount(formData)
       if(session){
-        const userData = await authService.getLoggedInUser() 
-        if(userData) dispatch(login(userData))
-        navigate("/")
+        //const userData = await authService.getLoggedInUser() 
+        //if(userData) 
+        //dispatch(login(userData))
+        navigate("/sign-in")
       }
     }
     catch(error){
@@ -36,11 +52,11 @@ function SignUp() {
       <h1 className=' mb-10 text-2xl font-bold'>Sign-Up</h1>
       <form onSubmit={handleSubmit} className=' space-y-6'>
         <Input 
-          value={name}
+          value={fullName}
           type="text"
           placeholder="Full Name"
           className="p-2 lg:w-full rounded-sm border  bg-white focus:outline-none focus:ring-2 focus:ring-background focus:border-transparent focus:shadow-md"
-          onChange={(e)=>setName(e.target.value)}
+          onChange={(e)=>setFullName(e.target.value)}
         /> 
         <Input 
           value={email}
@@ -59,6 +75,14 @@ function SignUp() {
         /> 
         <div className=' text-xs mt-1 ml-1 text-gray-500 '>Must be at least 8 characters.</div>
         </div>
+        <Input 
+          value={username}
+          type="text"
+          placeholder="Username"
+          className="p-2 lg:w-full rounded-sm border   bg-white focus:outline-none focus:ring-2 focus:ring-background focus:border-transparent focus:shadow-md"
+          onChange={(e)=>setUsername(e.target.value)}
+        />
+        <input type="file" accept="image/*" onChange={handleFileChange} />
         {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
         <Button 
           children='Create Account'

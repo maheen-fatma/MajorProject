@@ -14,7 +14,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@tinymce/tinymce-react": "^5.1.1",
     "appwrite": "^15.0.0",
-    "axios": "^1.7.7",
+    "axios": "^1.7.9",
     "html-react-parser": "^5.1.12",
     "preline": "^2.4.1",
     "react": "^18.3.1",

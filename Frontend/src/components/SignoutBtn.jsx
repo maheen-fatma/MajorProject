@@ -7,12 +7,21 @@ import { useNavigate } from 'react-router-dom'
 function SignoutBtn() {
   const navigate = useNavigate()
     const dispatch = useDispatch()
-    const signoutHandler = () => { 
-        authService.logout()
+    const signoutHandler = async () => { 
+      try {
+      const session= await authService.logout()
+      if(session){
+        dispatch(logout())
+        navigate("/")
+      } 
+      } catch (error) {
+        console.log("Error",error);
+      }
+       /* authService.logout()
         .then(() => {
             dispatch(logout())
             navigate("/")
-        })
+        })*/
 
     }
   return (

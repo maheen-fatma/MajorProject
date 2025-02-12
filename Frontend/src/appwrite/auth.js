@@ -1,6 +1,64 @@
 import { Client, Account, ID } from "appwrite";
 import conf from "../conf/conf";
+
+import axios from "axios"
+const API_URL = "http://localhost:8000/api/v1/users"
+
 export class AuthService {
+
+    async createAccount(formData){
+        try {
+            const response = await axios.post(`${API_URL}/register`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || "Registration failed";
+        }
+    }
+
+    async  getLoggedInUser() {
+        try {
+          const response = await axios.get(`${API_URL}/current-user`, { withCredentials: true });
+          return response.data
+        } catch (error) { 
+            throw error.response?.data || "Failed to get the current user";
+        }
+      }
+
+    async login ({email, username, password}){
+         try {
+            const response = await axios.post(`${API_URL}/login`, 
+                {email, username, password},
+                {withCredentials:true}
+            )
+            return response.data.data
+         } catch (error) {
+            throw error.response?.data || "Failed to login"
+         }
+      }
+ 
+    async logout (){
+        try {
+            const token = localStorage.getItem("token");
+
+        // Only send the Authorization header if a valid token exists
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+        const response = await axios.post(`${API_URL}/logout`, {}, {
+            withCredentials: true,
+            headers
+        });
+    
+            localStorage.removeItem("token"); 
+            localStorage.removeItem("user");
+            return response.data
+        } catch (error) {
+            throw error.response?.data || "Failed to logout"
+        }
+    }
+
+    //---------------------
      client = new Client();
      account;
 
@@ -9,7 +67,7 @@ export class AuthService {
         this.account = new Account(this.client);
      }
 
-     async createAccount ({email, password, name})  // this is the funcation that needs to be called at the time signup
+     /*async createAccount ({email, password, name})  // this is the funcation that needs to be called at the time signup
      {
         try {
             const user = await this.account.create(
@@ -34,8 +92,8 @@ export class AuthService {
             throw(error)
         }
      }
-
-     async login ({email, password})
+*/
+     /*async login ({email, password})
      {
         try {
             const session = await this.account.createEmailPasswordSession(
@@ -48,26 +106,16 @@ export class AuthService {
             throw(error)
         }
      }
+    */
 
-     //we also need to check if the user is logged in or not for uses in various components or pages. "This function will be used in our components and routes to check if a user is logged in, and access the user's details".
-    async  getLoggedInUser() {
-        try {
-          
-          return await this.account.get();
-        } catch (error) { //catch is executed if we are not able to reach out to a service
-          throw(error);
-        }
-        return null; //if try doesnot give us anything
-      }
-
-    async logout (){
+    /*async logout (){
         try {
              await this.account.deleteSessions( );
             
         } catch (error) {
             throw(error);
         }
-    }
+    }*/
 }
 
 const authService = new AuthService(); //so that we can simply use each services as authService.login(...) etc.

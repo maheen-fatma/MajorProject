@@ -10,21 +10,24 @@ import { Link } from 'react-router-dom'
 function SignIn() {
 
   const navigate= useNavigate()
+  const dispatch = useDispatch()
+
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [error, setError] = useState('')
-  const dispatch = useDispatch()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
     try{
-      const session= await authService.login({email, password})
+      const session= await authService.login({email, username, password})
       if(session){
-        const userData = await authService.getLoggedInUser() 
+    
+        const userData = session.user
         if(userData) dispatch(login(userData))
         navigate("/")
-      }
+      } 
     }
     catch(error){
       setError(error.message)
@@ -46,6 +49,14 @@ function SignIn() {
           placeholder="Email"
           className="p-2 lg:w-full rounded-sm border  bg-white focus:outline-none focus:ring-2 focus:ring-background focus:border-transparent focus:shadow-md"
           onChange={(e)=>setEmail(e.target.value)}
+        />
+        OR
+        <Input 
+          value={username}
+          type="text"
+          placeholder="Username"
+          className="p-2 lg:w-full rounded-sm border  bg-white focus:outline-none focus:ring-2 focus:ring-background focus:border-transparent focus:shadow-md"
+          onChange={(e)=>setUsername(e.target.value)}
         /> 
         
         <Input 
