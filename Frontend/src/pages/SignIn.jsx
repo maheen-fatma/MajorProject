@@ -30,7 +30,12 @@ function SignIn() {
       } 
     }
     catch(error){
-      setError(error.message)
+      
+      if(error && error.message){
+        setError(error.message || "Login failed please try again")
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     }
     
   }

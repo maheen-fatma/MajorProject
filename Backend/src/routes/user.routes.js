@@ -10,8 +10,8 @@ router.route("/register").post(
 );
 router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJWT ,logoutUser)
-router.route("/change-password").post(verifyJWT ,changePassword)
-router.route("/current-user").get(currentUserJWT, getCurrentUser)
-router.route("/update").patch(verifyJWT, updateAccountDetails)
-router.route("/update-avatar").patch(verifyJWT, upload.single("avatar"), updateUserAvatar)
+router.route("/change-password").post(verifyJWT ,changePassword) //
+router.route("/current-user").get(currentUserJWT, getCurrentUser) 
+router.route("/update").patch(verifyJWT, updateAccountDetails) //
+router.route("/update-avatar").patch(verifyJWT, upload.single("avatar"), updateUserAvatar) //
 export default router;
