@@ -182,7 +182,6 @@ const changePassword = asyncHandler( async (req,res)=>{
 })
 
 const getCurrentUser = asyncHandler (async(req,res)=>{
-    console.log("In get current user controller");
     
     return res
     .status(200)

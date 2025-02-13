@@ -23,7 +23,6 @@ function SignIn() {
     try{
       const session= await authService.login({email, username, password})
       if(session){
-    
         const userData = session.user
         if(userData) dispatch(login(userData))
         navigate("/")

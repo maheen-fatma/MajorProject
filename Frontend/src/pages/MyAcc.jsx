@@ -1,49 +1,99 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import SignoutBtn from '../components/SignoutBtn';
-
+import axios from 'axios';
+import { login } from '../store/authSlice'
 function MyAcc() {
-    
-    const userData1 = useSelector((state) => state.auth.userInfo, shallowEqual); // even if the reference changes it does not rerender. Only on changing the value in the object does it change
-    
-    // Handle both cases (before & after refresh)
+    const dispatch = useDispatch()
+    const userData1 = useSelector((state) => state.auth.userInfo, shallowEqual);
     const userData = userData1?.data || userData1;
 
-    
     const [user, setUser] = useState(null);
+    const [isEditable, setIsEditable] = useState(false)
+    const [editedData, setEditedData] = useState({ fullName: "", username: "" })
 
     useEffect(() => {
         if (userData) {
-            
             setUser(userData);
+            setEditedData({ fullName: userData.fullName, username: userData.username });
         } 
     }, [userData]);
+
+    const updateInfo = async () => {
+        try {
+            const response = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/update`,
+                editedData,
+                {withCredentials:true}
+            )
+
+            setUser(response.data.data);
+            console.log("before distapch");
+            
+            dispatch(login(response.data.data)); 
+            console.log("After");
+            
+        } catch (error) {
+            throw error.response?.data || "Failed edit info"
+        }
+    }
 
     if (!user) {
         return <div>Loading...</div>;
     }
 
-    const date = new Date(user.createdAt);
-    const datePart = date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+    const handleEdit = () => {
+        if(isEditable){
+            updateInfo()
+        }
+        setIsEditable((prev)=>!prev)
+    }
 
-    const timePart = date.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-    });
+    const handleChange = (e) => {
+        setEditedData({ ...editedData, [e.target.name]: e.target.value });
+    };
+
+    const date = user?.createdAt ? new Date(user.createdAt) : null;
+    const datePart = date
+    ? date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    : "N/A";
+
+    const timePart = date
+    ? date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })
+    : "N/A";
 
     return (
-        <div className='p-2 mx-10 font-dolce'>
-            <div className='text-3xl'>My Account</div>
-            <div>{user.fullName}</div>
-            <div>{user.email}</div>
-            <div>{datePart}</div>
-            <div>{timePart}</div>
+        <div className='p-2 mx-10 font-dolce space-y-5'>
+            <div className='text-3xl text-center mb-10'>My Account</div>
+            <div className="mt-2">
+                <label className="block">Full Name:</label>
+                <input
+                    type="text"
+                    name="fullName"
+                    value={editedData.fullName}
+                    onChange={handleChange}
+                    disabled={!isEditable}
+                    className={`p-1  ${isEditable ? "border-blue-500 border rounded " : "bg-white"} `}
+                />
+            </div>
+            <div className="mt-2">
+                <label className="block">Username:</label>
+                <input
+                    type="text"
+                    name="username"
+                    value={editedData.username}
+                    onChange={handleChange}
+                    disabled={!isEditable}
+                    className={`p-1  ${isEditable ? "border-blue-500 border rounded " : "bg-white"} `}
+                />
+            </div>
+            <div> email: {user.email}</div>
+            <div>Created at: {datePart}, {timePart}</div>
+            <button 
+            className='transition duration-500 hover:bg-buttons1  py-3 px-6  bg-gray-50 ' 
+            onClick={handleEdit} 
+            >
+                {isEditable? "Save":"Edit"}
+            </button>
             <SignoutBtn />
         </div>
     );

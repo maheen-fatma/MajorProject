@@ -28,7 +28,7 @@ function SignoutBtn() {
     <div>
       <Button 
         children='Sign-out' 
-        className='transition duration-500 hover:bg-buttons1 rounded-3xl py-3 px-6  bg-gray-50 '
+        className='transition duration-500 hover:bg-buttons1  py-3 px-6  bg-gray-50 '
         onClick={signoutHandler}
       />
     </div>
