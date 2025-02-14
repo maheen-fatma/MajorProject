@@ -8,9 +8,9 @@ import { v2 as cloudinary} from 'cloudinary'
 
 /*  TODO
 // (done) upload post
-//edit post
-// (done)view all post / post by specific user
-//view specific post by Id
+// (done) edit post
+// (done) view all post / post by specific user
+// (done) view specific post by Id
 //delete specific post*/
 
 //view all post / posts by giving a specific owner 
@@ -37,7 +37,7 @@ const uploadPost = asyncHandler( async (req,res)=>{
         throw new ApiError(400, "Both title and content are necessary fields")
     }
 
-    if(purchaseLink.trim())
+    if(purchaseLink && purchaseLink.trim())
     new URL(purchaseLink.trim())
 
     const postLocalPath = req.file?.path 
@@ -66,7 +66,50 @@ const uploadPost = asyncHandler( async (req,res)=>{
     return res.status(200).json(new ApiResponse(201, createdPost, "Post created successfully"))
 })
 
+//edit post- this edits only the title an dthe content of the post and not the image uploaded to it
+const editPost = asyncHandler( async (req,res) => {
+    const { id } = req.params
+    const {title,content, purchaseLink} = req.body
+
+    if (!title && !content) 
+        throw new ApiError(400, "Either title or content is required");
+    if(title ==="")
+        throw new ApiError(400,"Title cannot be empty")
+    const post = await Post.findByIdAndUpdate(
+        id,
+        {title , content , purchaseLink},
+        {new: true}
+    )
+    return res.status(200).json( new ApiResponse(200, post, "Post edited successfully"))
+})
+
+//get post by id : view a specific post by id
+const getPostById = asyncHandler( async (req,res) => {
+    const { id } = req.params
+    const post = await Post.findById(id)
+    if(!post)
+        throw new ApiError(404, "Post not found")
+
+    return res.status(200).json(new ApiResponse(200, post, "Post found successfully"))
+})
+
+//delete a post
+const deletePost = asyncHandler( async (req,res)=>{
+    const {id} = req.params;
+    const post = await Post.findById(id)
+    if(!post){
+        throw new ApiError(404, "Post not found")
+    }
+
+    await Post.findByIdAndDelete(id)
+
+    return res.status(200).json(new ApiResponse(200, null, "Post deleted successfully"));
+})
+
 export {
     viewPosts,
-    uploadPost
+    uploadPost,
+    editPost,
+    getPostById,
+    deletePost
 }

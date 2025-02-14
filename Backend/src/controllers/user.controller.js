@@ -219,6 +219,7 @@ const deleteImageCloudinary = async (publicId) => {
       console.error("Error deleting image:", error);
     }
   };
+  
 const updateUserAvatar = asyncHandler( async (req,res) => {
     //retrieve public id of old avatar
     const avatarUrlOld  = req.user?.avatar 

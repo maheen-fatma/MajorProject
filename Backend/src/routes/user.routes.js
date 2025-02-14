@@ -7,7 +7,7 @@ const router = Router()
 router.route("/register").post(
     upload.single('avatar'), // Single file upload
     registerUser
-);
+)
 router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJWT ,logoutUser)
 router.route("/change-password").post(verifyJWT ,changePassword) //
