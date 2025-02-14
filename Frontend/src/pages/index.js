@@ -8,6 +8,8 @@ import EditPost from "./EditPost";
 import MyPosts from "./MyPosts";
 import AskAi from "./AskAi";
 import MyAcc from "./MyAcc";
+import EditPassword from "./EditPassword";
+import EditAvatar from "./EditAvatar";
 export  {
     Home,
     SignIn,
@@ -18,5 +20,7 @@ export  {
     EditPost, 
     MyPosts,
     AskAi,
-    MyAcc
+    MyAcc,
+    EditPassword,
+    EditAvatar
 }

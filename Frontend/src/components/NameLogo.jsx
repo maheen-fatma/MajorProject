@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 function NameLogo() {
     const userData = useSelector((state)=>(state.auth.userInfo))
+    console.log("NameLogo.jsx ",userData.fullName);
     
     
      // State to track dropdown visibility
@@ -23,13 +24,16 @@ function NameLogo() {
     <div>
       <div className="relative inline-block text-left pt-1">
   <div>
-    <button type="button" className="inline-flex items-center justify-center w-10 h-10  bg-gray-300 text-customMaroon font-bold text-lg font-dolce rounded-full shadow-md hover:bg-gray-200 transition-colors" id="menu-button" aria-expanded={isOpen}
-            aria-haspopup="true"
-            onClick={toggleDropdown}>
-      {userData?.name 
-    ? `${userData.name.split(' ')[0][0]}${userData.name.split(' ')[1]?.[0] || ''}` 
-    : '*'}
+    <button type="button" className="inline-flex items-center justify-center w-10 h-10 bg-gray-300 text-customMaroon font-bold text-lg font-dolce rounded-full shadow-md hover:bg-gray-200 transition-colors overflow-hidden" id="menu-button" aria-expanded={isOpen}
+        aria-haspopup="true"
+        onClick={toggleDropdown}>
+       <img 
+        src={userData.avatar} 
+        alt={userData.fullName} 
+        className="rw-full h-full object-fill rounded-full"
+    />
     </button>
+   
   </div>
 
   

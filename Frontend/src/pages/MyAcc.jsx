@@ -3,6 +3,7 @@ import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import SignoutBtn from '../components/SignoutBtn';
 import axios from 'axios';
 import { login } from '../store/authSlice'
+import { Link, Outlet } from 'react-router-dom';
 function MyAcc() {
     const dispatch = useDispatch()
     const userData1 = useSelector((state) => state.auth.userInfo, shallowEqual);
@@ -27,13 +28,10 @@ function MyAcc() {
             )
 
             setUser(response.data.data);
-            console.log("before distapch");
-            
             dispatch(login(response.data.data)); 
-            console.log("After");
             
         } catch (error) {
-            throw error.response?.data || "Failed edit info"
+            throw error.response?.data || "Failed to edit info"
         }
     }
 
@@ -88,13 +86,30 @@ function MyAcc() {
             </div>
             <div> email: {user.email}</div>
             <div>Created at: {datePart}, {timePart}</div>
+            <div className="flex justify-start gap-4 mt-5">
             <button 
-            className='transition duration-500 hover:bg-buttons1  py-3 px-6  bg-gray-50 ' 
-            onClick={handleEdit} 
+                className='transition duration-500 hover:bg-buttons1 py-3 px-6 bg-gray-50' 
+                onClick={handleEdit}
             >
-                {isEditable? "Save":"Edit"}
+                {isEditable ? "Save" : "Edit"}
             </button>
+            <Link 
+                to="/my-account/edit-password" 
+                className='transition duration-500 hover:bg-buttons1 py-3 px-6 bg-gray-50'
+            >
+                Edit Password
+            </Link>
+            <Link 
+                to="/my-account/edit-avatar" 
+                className='transition duration-500 hover:bg-buttons1 py-3 px-6 bg-gray-50'
+            >
+                Edit Avatar
+            </Link>
             <SignoutBtn />
+        </div>
+
+        <Outlet />
+            
         </div>
     );
 }

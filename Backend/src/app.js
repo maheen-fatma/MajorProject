@@ -23,9 +23,10 @@ app.use("/api/v1/posts", postRouter)
 //global error handler middleware
 //without this, the error thrown by ApiError will not be caught and the request would be crashed and an error stack will be shown in the backend console.
 app.use((err, req, res, next) => {
-    console.log("err   ", err);
+    
     
     if (err instanceof ApiError) {
+        
         return res.status(err.statusCode).json({
             success: false,
             message: err.message,
