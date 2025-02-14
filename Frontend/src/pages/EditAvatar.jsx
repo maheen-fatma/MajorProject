@@ -54,7 +54,7 @@ function EditAvatar() {
                 className='transition duration-500 hover:bg-buttons1 py-3 px-6 bg-gray-50' 
                 onClick={handleSubmit}
         >
-                Change Password
+                Change Avatar
         </button>
         
     </div>

@@ -2,7 +2,7 @@ import { Client, Account, ID } from "appwrite";
 import conf from "../conf/conf";
 
 import axios from "axios"
-const API_URL = "http://localhost:8000/api/v1/users"
+const API_URL = import.meta.env.VITE_BACKEND_URL
 
 export class AuthService {
 
@@ -67,55 +67,7 @@ export class AuthService {
         this.account = new Account(this.client);
      }
 
-     /*async createAccount ({email, password, name})  // this is the funcation that needs to be called at the time signup
-     {
-        try {
-            const user = await this.account.create(
-                ID.unique(), 
-                email, 
-                password,
-                name
-            );
-            
-            if(user) //the user might not be able to complete auth due to some reason
-            {
-                //if the user has signed in, we will automatically log him
-                return this.login({email, password})
-            }
-            else
-            {
-               return user 
-            }
-            
-            
-        } catch (error) {
-            throw(error)
-        }
-     }
-*/
-     /*async login ({email, password})
-     {
-        try {
-            const session = await this.account.createEmailPasswordSession(
-                email, 
-                password
-            );
-            return session;
-            
-        } catch (error) {
-            throw(error)
-        }
-     }
-    */
 
-    /*async logout (){
-        try {
-             await this.account.deleteSessions( );
-            
-        } catch (error) {
-            throw(error);
-        }
-    }*/
 }
 
 const authService = new AuthService(); //so that we can simply use each services as authService.login(...) etc.

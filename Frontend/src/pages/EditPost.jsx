@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import dbService from '../appwrite/databases';
+import dbService from '../backend/databases';
 import { PostManipulation } from '../components';
 function EditPost() {
     const {postId} = useParams();

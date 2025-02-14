@@ -5,10 +5,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 function NameLogo() {
     const userData = useSelector((state)=>(state.auth.userInfo))
-    console.log("NameLogo.jsx ",userData.fullName);
-    
-    
-     // State to track dropdown visibility
+   
   const [isOpen, setIsOpen] = useState(false);
 
   // Function to toggle dropdown

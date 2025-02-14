@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import dbService from '../appwrite/databases'
+import dbService from '../backend/databases'
 function PostPreview({
     $id, //the id will be used to navigate to the entire post
     title="Post title",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import dbService from '../appwrite/databases';
+import dbService from '../backend/databases';
 import { useSelector } from 'react-redux';
 import parse from 'html-react-parser'
 import {Button, PostManipulation} from '../components'

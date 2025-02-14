@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser"
 const app = express()
 import userRouter from './routes/user.routes.js'
 import postRouter from './routes/post.routes.js'
+import likeRouter from './routes/like.routes.js'
 import { ApiError } from "./utils/ApiError.js";  
 
 
@@ -19,6 +20,7 @@ app.use(cookieParser())
 
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/posts", postRouter)
+//app.use("/api/v1/likes", likeRouter)
 
 //global error handler middleware
 //without this, the error thrown by ApiError will not be caught and the request would be crashed and an error stack will be shown in the backend console.

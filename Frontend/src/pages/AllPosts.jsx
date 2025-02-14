@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { PostPreview } from '../components'
-import dbService from '../appwrite/databases'
+import dbService from '../backend/databases'
 import Masonry, {ResponsiveMasonry} from 'react-responsive-masonry'
 import InfiniteScroll from 'react-infinite-scroll-component'
 

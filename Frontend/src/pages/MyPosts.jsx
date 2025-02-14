@@ -1,5 +1,5 @@
 import React, { useState , useEffect } from 'react'
-import dbService from '../appwrite/databases'
+import dbService from '../backend/databases'
 import { PostPreview } from '../components'
 import Masonry, {ResponsiveMasonry} from 'react-responsive-masonry'
 import { useSelector } from 'react-redux'

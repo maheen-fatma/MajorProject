@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Input from './Input'
 import EditorComponent from './EditorComponent'
-import dbService from '../appwrite/databases'
+import dbService from '../backend/databases'
 import Button from './Button'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
