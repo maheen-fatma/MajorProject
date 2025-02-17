@@ -15,5 +15,5 @@ router.route("/change-password").post(verifyJWT ,changePassword)
 router.route("/current-user").get(currentUserJWT, getCurrentUser) 
 router.route("/update").patch(verifyJWT, updateAccountDetails) 
 router.route("/update-avatar").patch(verifyJWT, upload.single("avatar"), updateUserAvatar) 
-router.route("/my-likes").get(verifyJWT, getLikedPostByUser)
+router.route("/my-likes").get(verifyJWT, getLikedPostByUser)//posts that the user has liked
 export default router;
