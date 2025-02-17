@@ -4,7 +4,7 @@ import dbService from '../backend/databases';
 import { useSelector } from 'react-redux';
 import parse from 'html-react-parser'
 import axios from 'axios';
-import {Button, PostManipulation} from '../components'
+import {Button, PostManipulation, LikesDisplay} from '../components'
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 const API_URL = import.meta.env.VITE_BACKEND_URL
 function Post() {
@@ -19,6 +19,8 @@ function Post() {
   const { postId } = useParams(); //this extracts the 'fromUrl' parameter from the url. This particularly hold the id
   const [post , setPost] = useState(null);
   const [isLiked, setIsLiked] = useState(false)
+  const [numOfLikes, setNumOfLikes] = useState(0)
+  const [likedUsers, setLikedUsers] = useState([])
   const navigate = useNavigate();
   const userData = useSelector((state)=> state.auth.userInfo)
   //check if the post that is clicked belongs to the person logged in, for this it will check if the post and the userData exist, then also it will check if the userId parameter of the post is the id parameter of the userData
@@ -34,12 +36,32 @@ function Post() {
   }
   }
 
+  const getLikeCount = async () => {
+    try {
+      const response = await axios.post(`${API_URL}/posts/${postId}/likes`, {}, {
+        withCredentials: true,
+      })
+      return response.data.data
+    } catch (error) {
+      console.error("Error fetching number of likes:", error);
+    }
+  }
+
   const likeToggle = async () => {
     try {
       const response = await axios.post(`${API_URL}/posts/${postId}/like`, {}, {
         withCredentials: true, 
     });
     setIsLiked(!isLiked);
+    //re render the number of likes, and users liked
+    //get the like count and liked users
+    try {
+      const likeCountAndUsers = await getLikeCount()
+      setNumOfLikes(likeCountAndUsers.likeCount)
+      setLikedUsers(likeCountAndUsers.users)
+    } catch (error) {
+      console.error("Error fetching number of likes:", error);
+    }
     return response.data
     } catch (error) {
       throw error.response?.data || "Could not liked/unliked the post";
@@ -52,12 +74,23 @@ function Post() {
       dbService.getPost(postId).then(async (post) => {
         if (post) {
           setPost(post);
+          //get the like status
           try {
             const likedStatus = await isPostLiked(); 
             setIsLiked(likedStatus); 
           } catch (error) {
             console.error("Error fetching like status:", error);
             setIsLiked(false);
+          }
+
+          //get the like count and liked users
+          try {
+            const likeCountAndUsers = await getLikeCount()
+            setNumOfLikes(likeCountAndUsers.likeCount)
+            setLikedUsers(likeCountAndUsers.users)
+            
+          } catch (error) {
+            console.error("Error fetching number of likes:", error);
           }
         } else {
           navigate("/");
@@ -119,8 +152,9 @@ function Post() {
               </div>
               </div>
               <div className=' font-dolce text-lg pt-5'>{ post.content ? parse(post.content) : ""}</div>
+              <div className='flex items-center space-x-2 mt-7'>
               <button 
-                className={`mt-7  rounded-full transition ${
+                className={`rounded-full transition ${
                 isLiked ? "text-red-700" : "text-slate-400 hover:text-red-700"
                 }`} 
                 onClick={likeToggle}
@@ -131,6 +165,10 @@ function Post() {
                 <FaRegHeart size={24} />
                 )}
               </button>
+              <div className=' font-dolce text-sm'>{numOfLikes}</div>
+              </div>
+              <LikesDisplay likedUsers={likedUsers}/>
+                
           </div>
       </div>
     </div>

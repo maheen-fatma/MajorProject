@@ -4,7 +4,7 @@ import dbService from '../backend/databases'
 import Masonry, {ResponsiveMasonry} from 'react-responsive-masonry'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-function AllPosts() {
+function MyLikes() {
     const [posts , setPosts] = useState([])
     const [hasMore, setHasMore] = useState(true)
     useEffect(()=>{
@@ -12,12 +12,15 @@ function AllPosts() {
     },[])
 
     const loadPosts = () => {
-      dbService.getAllPost()
+      dbService.getMyLikes()
         .then((newPosts) => {
           if (newPosts.length > 0)
             setPosts((prevPosts) => [...prevPosts, ...newPosts])  // Directly use the array
           else
             setHasMore(false) // Stop loading when no more posts
+
+        console.log(posts);
+        
   })
         
     }
@@ -34,7 +37,7 @@ function AllPosts() {
         <Masonry gutter="25px">
       {posts && posts.map((item,index)=>(
         <div key={index} className=' '>
-            <PostPreview {...item} />
+            <PostPreview {...item.associatedPost} />
         </div>
       ))}
         </Masonry>
@@ -44,4 +47,4 @@ function AllPosts() {
   )
 }
 
-export default AllPosts
+export default MyLikes

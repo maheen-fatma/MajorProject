@@ -105,6 +105,12 @@ function MyAcc() {
             >
                 Edit Avatar
             </Link>
+            <Link 
+                to="/my-likes" 
+                className='transition duration-500 hover:bg-buttons1 py-3 px-6 bg-gray-50'
+            >
+                My Likes
+            </Link>
             <SignoutBtn />
         </div>
 

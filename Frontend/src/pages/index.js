@@ -10,6 +10,7 @@ import AskAi from "./AskAi";
 import MyAcc from "./MyAcc";
 import EditPassword from "./EditPassword";
 import EditAvatar from "./EditAvatar";
+import MyLikes from "./MyLikes";
 export  {
     Home,
     SignIn,
@@ -22,5 +23,6 @@ export  {
     AskAi,
     MyAcc,
     EditPassword,
-    EditAvatar
+    EditAvatar,
+    MyLikes
 }
