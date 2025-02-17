@@ -7,7 +7,7 @@ const router = Router()
 router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
 
 router.route("/view-posts").get(viewPosts)
-router.route("/upload-post").post(upload.single('post'),uploadPost)
+router.route("/upload-post").post(upload.single('postImage'),uploadPost)
 router.route("/:id").get(getPostById)
 router.route("/:id/edit-post").patch(editPost)
 router.route("/:id/delete-post").delete(deletePost)

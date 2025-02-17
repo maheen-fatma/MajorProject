@@ -9,21 +9,21 @@ function MyPosts() {
   const [posts, setPosts] = useState([])
   const userData = useSelector((state)=>(state.auth.userInfo))
   useEffect(()=>{
-    dbService.getAllPost().then((newPosts)=>{
+    dbService.getAllPost(userData._id).then((newPosts)=>{
       if(newPosts)
-        setPosts(newPosts.documents)
+        setPosts(newPosts)
 
     })
   },[])
 
-  const userPosts = posts.filter((item) => userData && item.userId === userData.$id);
+  
   return (
     <div className=' px-10 p-[20px]  '>
       <ResponsiveMasonry columnsCountBreakPoints={{350: 1, 750: 2, 900: 3}}>
         <Masonry gutter="20px">
-        {userPosts.length > 0 ? (
-            userPosts.map((item) => (
-              <div key={item.$id} className=''>
+        {posts.length > 0 ? (
+            posts.map((item) => (
+              <div key={item._id} className=''>
                 <PostPreview {...item} />
               </div>
             ))

@@ -20,7 +20,7 @@ function EditPassword() {
     const changePassword = async () => {
         try {
             const response = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/change-password`,
+                `${import.meta.env.VITE_BACKEND_URL}/users/change-password`,
                 { newPassword, oldPassword },
                 { withCredentials: true }
             );

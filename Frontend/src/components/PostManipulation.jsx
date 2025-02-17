@@ -11,92 +11,49 @@ function PostManipulation({post}) {
     const userData = useSelector((state)=>(state.auth.userInfo))
     const navigate= useNavigate()
     const [loading , setLoading] = useState(false)
-    const [formData, setFormData] = useState({
-        title: post?.title || "",
-        slug: post?.slug || "",
-        content: post?.content || "",
-        imageState: null
-    })
-    const handleInputChange = (e) => {
-        const {name, value} = e.target;
-        setFormData((prev)=>({
-            ...prev,
-            [name]: value,
-        }))
-    }
-    const handleFileChange = (e) => {
-        setFormData((prev)=>({
-            ...prev,
-            imageState: e.target.files[0]
-        }))
-    }
+    const [error, setError] = useState("")
+    const [title, setTitle] = useState('')
+    const [purchaseLink, setPurchaseLink] = useState('')
+    const [content, setContent] = useState(post?.content || '');
+    const [postImage, setPostImage] = useState('')
     
-
-    const slugTransform = useCallback((value)=>{
-        if(value){
-            return value.trim().toLowerCase().replace(/ /g,'-')
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        if (name === "title") setTitle(value);
+        if (name === "purchaseLink") setPurchaseLink(value);
+    };
+    const handleFileChange = (e) => {
+        if (e.target.files.length > 0) {
+            setPostImage(e.target.files[0]);
         }
-        return "";
-    },[])
-
-    useEffect(()=>{
-        const newSlug=slugTransform(formData.title)
-        if(formData.slug!==newSlug){ 
-        setFormData((prev)=>({
-            ...prev,
-            slug: newSlug
-        }))
-    }
-    },[formData.title, slugTransform])
-
+    };
+    
     const handleSubmit = async (e) => {
         e.preventDefault()
-        let file= null //initialize a variable to store the uploaded file
+        setError("")
         setLoading(true)
-        
-        if(formData.imageState){ //if the image file was provided by the user...
-            //upload the image file
-            file = await dbService.uploadFile(formData.imageState)
+        try {
+            const formData = new FormData()
+            formData.append("title", title);
+            formData.append("content", content);
+            formData.append("purchaseLink", purchaseLink);
+            if (postImage) formData.append("postImage", postImage);
             
-            
-        }
-
-        if(post) //if the post is being updated
-        {
-            if(file){
-                //check if the new file was uploaded then delete the old file
-                dbService.deleteFile(post.image)
+            const session = await dbService.newPost(formData)
+            setLoading(false)
+            if(session){
+                console.log(session.message);
+                const postId = session.data._id
+                navigate(`/posts/${postId}`)
             }
-            //update the existing post with a new data
-            const updatedPost = await dbService.editPost(post.$id,{
-                ...formData,
-                image: file ? file.$id : post.image 
-            })
-            //here what we did was is to update the formData state variable with the new image id that has been uploaded if at all it was 
-            if(updatedPost){ //if every updation was done sucessfully, navigate to the posts page
-                setLoading(false)
-                navigate(`/posts/${updatedPost.$id}`)
-            } 
+        } catch (error) {
+            if(error && error.message){
+                setError(error.message || "Failed to create a post")
+              } else {
+                setError("Something went wrong. Please try again.");
+              }
         }
-        else //if new post is to be created
-        {
-            
-            if(file && file.$id){
-                
-                const fileId = file.$id 
-                //if file was uploaded
-                formData.image=fileId//add the file id to the form data
-                const newPost=await dbService.newPost({
-                    ...formData,
-                    userId: userData.$id
 
-                })
-                if(newPost){
-                    setLoading(false)
-                    navigate(`/posts/${newPost.$id}`)
-                }
-            }  
-        }
     }
   return loading ? (
     
@@ -110,7 +67,7 @@ function PostManipulation({post}) {
         <Input
             label= "Title: "
             name="title"
-            value={formData.title}
+            value={title}
             placeholder= "Title"
             onChange={handleInputChange}
             required
@@ -118,13 +75,13 @@ function PostManipulation({post}) {
             overallClassName= " font-dolce ml-4"
         />
         <Input
-            label= "Slug: "
-            name="slug"
-            value={formData.slug}
-            placeholder= "Slug"
+            label= "Purchase Link: "
+            name="purchaseLink"
+            value={purchaseLink}
+            placeholder= "link"
             onChange={handleInputChange}
-            disabled
-            className="p-2 mb-2 rounded-md border  bg-white focus:outline-none focus:ring-2 focus:ring-background focus:border-transparent focus:shadow-lg "
+            required
+            className="mb-1 p-2  rounded-md border  bg-white focus:outline-none focus:ring-1 focus:ring-customMaroon focus:border-transparent focus:shadow-lg "
             overallClassName= " font-dolce ml-4"
         />
         <div className={`p-5 flex ${post ? 'flex-row  space-x-6 ' : 'flex-col space-y-5'} m-10 border border-customMaroon border-solid rounded-2xl`}>
@@ -132,7 +89,7 @@ function PostManipulation({post}) {
         <div className={` ${post ? 'w-1/2 ' : 'pl-3'}`}>
         <Input
             label= "Add Image: "
-            name="imageState"
+            name="postImage"
             type= "file"
             accept="image/png, image/jpg, image/jpeg, image/gif"
             overallClassName =' font-dolce'
@@ -153,11 +110,12 @@ function PostManipulation({post}) {
         <EditorComponent
             lable="Content: "
             name= "content"
-            value= {formData.content}
-            onChange={(value) => setFormData((prev)=>({...prev, content: value}))}
+            value= {content}
+            onChange={(value) => setContent(value)}
             className={` ${post ? 'w-1/2' : ''}`}
         />
         </div>
+        {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
         <Button
         children={post? "Update":"Create Post"}
         type='submit'

@@ -40,7 +40,7 @@ const getLikes = asyncHandler( async(req , res)=>{
 
 const getLikedPostByUser = asyncHandler( async(req,res)=>{
     const userId = req.user.id
-    const likedPost = await Like.find({owner:userId}).populate("associatedPost","")
+    const likedPost = await Like.find({owner:userId}).populate("associatedPost")
     return res.status(200).json(new ApiResponse(200, likedPosts, "Liked posts fetched successfully."));
 })
 

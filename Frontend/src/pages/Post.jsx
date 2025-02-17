@@ -13,18 +13,18 @@ function Post() {
     document.querySelector('html').classList.add(theme)
   },[theme])
 
-  const { fromUrl } = useParams(); //this extracts the 'fromUrl' parameter from the url. This particularly hold the id
+  const { postId } = useParams(); //this extracts the 'fromUrl' parameter from the url. This particularly hold the id
   const [post , setPost] = useState(null);
   const navigate = useNavigate();
   const userData = useSelector((state)=> state.auth.userInfo)
   //check if the post that is clicked belongs to the person logged in, for this it will check if the post and the userData exist, then also it will check if the userId parameter of the post is the id parameter of the userData
-  const isCurrAuthor = post && userData ? post.userId === userData.$id : false 
+  const isCurrAuthor = post && userData ? post.owner._id === userData._id : false 
 
   //to fetch that particular post whenever there is a change in the id parameter fetched from the url 
   useEffect(()=>{
-    if(fromUrl){
+    if(postId){
       
-      dbService.getPost(fromUrl).then((post)=>{
+      dbService.getPost(postId).then((post)=>{
         if(post) 
           setPost(post);
         else 
@@ -33,12 +33,11 @@ function Post() {
     } else {
       navigate("/")
     }
-  },[fromUrl,navigate])
+  },[postId,navigate])
 
   const deletePost = ()=> {
-    dbService.deletePost(post.$id).then((isDeleted)=>{
-      if(isDeleted)
-        dbService.deleteFile(post.image)
+    dbService.deletePost(post._id).then(()=>{
+      console.log("Post deleted");
       navigate("/")
     })
   }
@@ -47,13 +46,12 @@ function Post() {
     <div className=' p-10 lg:px-56'>
       <div className=' flex md:flex-row flex-col justify-center dark:bg-gray-800 dark:text-whiteBg dark:shadow-cyan-900 bg-white rounded-3xl shadow-custom  '>
           <div className='md:w-1/2 '>
-              <img 
-              src={dbService.filePreview(post.image)} 
-              alt="Post Image" 
-              className='rounded-tl-3xl rounded-bl-3xl h-full'
-              />
+            <img 
+            src={post.imageFile} 
+            alt={"Post cant get"} 
+            className="rounded-tl-3xl rounded-bl-3xl h-full"
+            />
           </div>
-          
           <div className='md:w-1/2 p-5  '>
               <div className='flex justify-end space-x-4'>
                   { isCurrAuthor && ( <>
@@ -66,14 +64,28 @@ function Post() {
                   children='Edit'
                   className=' bg-red-600 text-white font-dolce tracking-wider rounded-3xl px-5 hover:bg-red-700 '
                   onClick={()=>{
-                    navigate(`/edit-post/${post.$id}`)
+                    navigate(`/edit-post/${post._id}`)
                   }}
                   /> </>
                 )
                   }
               </div>
               <h1 className=' text-3xl font-dolceBold tracking-wider'>{post.title}</h1>
-              <div className=' font-dolce text-lg pt-5'>{ parse(post.content) }</div>
+              <div className=' font-dolce text-sm pt-5 mt-1 '>
+                Buy:
+              <a href={post.purchaseLink} target="_blank" rel="noopener noreferrer" className=' font-dolce text-sm pt-5 underline text-blue-500 ml-1'>
+                  {post.purchaseLink}
+              </a>
+              <div className="flex items-center mt-2">
+                <img 
+                  src={post.owner.avatar} 
+                  alt="User Avatar" 
+                  className="w-6 h-6 rounded-full object-cover mr-2" 
+                />
+    <div className="text-sm">{post.owner.username}</div>
+  </div>
+              </div>
+              <div className=' font-dolce text-lg pt-5'>{ post.content ? parse(post.content) : ""}</div>
           </div>
       </div>
     </div>

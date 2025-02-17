@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 function NameLogo() {
-    const userData = useSelector((state)=>(state.auth.userInfo))
-   
+  const userData = useSelector((state)=>(state.auth.userInfo))
   const [isOpen, setIsOpen] = useState(false);
 
   // Function to toggle dropdown
@@ -17,7 +16,7 @@ function NameLogo() {
   const closeDropdown = () => {
     setIsOpen(false);
   };
-  return (
+  return ( 
     <div>
       <div className="relative inline-block text-left pt-1">
   <div>
@@ -25,8 +24,8 @@ function NameLogo() {
         aria-haspopup="true"
         onClick={toggleDropdown}>
        <img 
-        src={userData.avatar} 
-        alt={userData.fullName} 
+        src={userData?.avatar || "https://images.app.goo.gl/sBEav9PTRMLRsCpF7"} 
+        alt={userData?.fullName || "User Avatar"} 
         className="rw-full h-full object-fill rounded-full"
     />
     </button>
@@ -81,7 +80,7 @@ function NameLogo() {
         )}
 </div>
 
-    </div>
+    </div> 
   )
 }
 

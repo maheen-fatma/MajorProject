@@ -13,12 +13,12 @@ function AllPosts() {
 
     const loadPosts = () => {
       dbService.getAllPost()
-        .then((newPosts)=>{
-            if(newPosts && newPosts.documents.length > 0)
-                setPosts((prevPosts) => [...prevPosts, ...newPosts.documents]) //the getAllPosts function returns an object with documents as a property which inturn is an array of objects containiing all the info of the posts
-            else
-                setHasMore(false) // Stop loading when no more posts
-        })
+        .then((newPosts) => {
+          if (newPosts.length > 0)
+            setPosts((prevPosts) => [...prevPosts, ...newPosts])  // Directly use the array
+          else
+            setHasMore(false) // Stop loading when no more posts
+  })
         
     }
   return (

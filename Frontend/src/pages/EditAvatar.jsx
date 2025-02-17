@@ -2,13 +2,16 @@ import React from 'react'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { login } from '../store/authSlice'
 
 function EditAvatar() {
     const [avatar, setAvatar] = useState(null)
     const [error, setError] = useState('')
     const [successMessage, setSuccessMessage] = useState(""); // Success message state
     const navigate = useNavigate(); 
-
+    const dispatch = useDispatch()
+    const userData = useSelector((state)=>(state.auth.userInfo))
     const handleFileChange = (e) => {
         setAvatar(e.target.files[0]); 
       };
@@ -20,13 +23,14 @@ function EditAvatar() {
             const formData = new FormData()
             if (avatar) formData.append("avatar", avatar);
             const response = await axios.patch(
-                `${import.meta.env.VITE_BACKEND_URL}/update-avatar`,
+                `${import.meta.env.VITE_BACKEND_URL}/users/update-avatar`,
                 formData,
                 { withCredentials: true }
             );
-
-            
+            const updatedUser = response.data.data; 
+            dispatch(login(updatedUser));
             setSuccessMessage("Avatar Changed Successfully"); // Show success message
+            
 
             setTimeout(() => {
                 navigate("/my-account"); // Navigate after 2 seconds

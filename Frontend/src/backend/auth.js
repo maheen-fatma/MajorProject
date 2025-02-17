@@ -1,6 +1,4 @@
-import { Client, Account, ID } from "appwrite";
 import conf from "../conf/conf";
-
 import axios from "axios"
 const API_URL = import.meta.env.VITE_BACKEND_URL
 
@@ -8,7 +6,7 @@ export class AuthService {
 
     async createAccount(formData){
         try {
-            const response = await axios.post(`${API_URL}/register`, formData, {
+            const response = await axios.post(`${API_URL}/users/register`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             return response.data;
@@ -19,7 +17,7 @@ export class AuthService {
 
     async  getLoggedInUser() {
         try {
-          const response = await axios.get(`${API_URL}/current-user`, { withCredentials: true });
+          const response = await axios.get(`${API_URL}/users/current-user`, { withCredentials: true });
           return response.data
         } catch (error) { 
             throw error.response?.data || "Failed to get the current user";
@@ -28,7 +26,7 @@ export class AuthService {
 
     async login ({email, username, password}){
          try {
-            const response = await axios.post(`${API_URL}/login`, 
+            const response = await axios.post(`${API_URL}/users/login`, 
                 {email, username, password},
                 {withCredentials:true}
             )
@@ -45,7 +43,7 @@ export class AuthService {
         // Only send the Authorization header if a valid token exists
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-        const response = await axios.post(`${API_URL}/logout`, {}, {
+        const response = await axios.post(`${API_URL}/users/logout`, {}, {
             withCredentials: true,
             headers
         });
@@ -57,17 +55,6 @@ export class AuthService {
             throw error.response?.data || "Failed to logout"
         }
     }
-
-    //---------------------
-     client = new Client();
-     account;
-
-     constructor(){
-        this.client.setEndpoint(conf.appwriteUrl).setProject(conf.appwriteProjectId)
-        this.account = new Account(this.client);
-     }
-
-
 }
 
 const authService = new AuthService(); //so that we can simply use each services as authService.login(...) etc.

@@ -22,7 +22,7 @@ function MyAcc() {
 
     const updateInfo = async () => {
         try {
-            const response = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/update`,
+            const response = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/users/update`,
                 editedData,
                 {withCredentials:true}
             )

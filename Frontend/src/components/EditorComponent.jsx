@@ -11,6 +11,7 @@ function EditorComponent({name, label, defaultValue="", onChange, className=""})
       onChange(content);
     }
   },[content])
+  
 
   const editorRef = useRef(null);
   

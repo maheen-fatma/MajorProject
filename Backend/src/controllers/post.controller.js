@@ -25,31 +25,30 @@ const viewPosts = asyncHandler(async(req,res)=>{
             return res.status(200).json(new ApiResponse(200, posts, "Posts for the user viewed successully"))
         
 })
-
+ 
 //upload post
 const uploadPost = asyncHandler( async (req,res)=>{
 
     //post uploaded to local file via multer middleware
-
+    
     //take title, content and purchase link
     const {title, content, purchaseLink} = req.body
     if(!title || !content){
         throw new ApiError(400, "Both title and content are necessary fields")
     }
-
-    if(purchaseLink && purchaseLink.trim())
-    new URL(purchaseLink.trim())
-
+    
+    
     const postLocalPath = req.file?.path 
     if(!postLocalPath){
         throw new ApiError(400, "Post required")
     }
+    
     const postCloudinary = await uploadOnCloudinary(postLocalPath)
 
     if(!postCloudinary){
         throw new ApiError (400, "Cannot be uploaded to cloudinary")
     }
-
+    
     const post = await Post.create({
         owner: req.user._id,
         imageFile: postCloudinary.url,
@@ -62,7 +61,7 @@ const uploadPost = asyncHandler( async (req,res)=>{
     if(!createdPost){
         throw new ApiError(400, "New post could not be created")
     }
-
+    
     return res.status(200).json(new ApiResponse(201, createdPost, "Post created successfully"))
 })
 
@@ -86,10 +85,10 @@ const editPost = asyncHandler( async (req,res) => {
 //get post by id : view a specific post by id
 const getPostById = asyncHandler( async (req,res) => {
     const { id } = req.params
-    const post = await Post.findById(id)
+    const post = await Post.findById(id).populate("owner","username avatar")
     if(!post)
         throw new ApiError(404, "Post not found")
-
+    
     return res.status(200).json(new ApiResponse(200, post, "Post found successfully"))
 })
 
