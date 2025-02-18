@@ -18,8 +18,6 @@ function MyLikes() {
             setPosts((prevPosts) => [...prevPosts, ...newPosts])  // Directly use the array
           else
             setHasMore(false) // Stop loading when no more posts
-
-        console.log(posts);
         
   })
         
