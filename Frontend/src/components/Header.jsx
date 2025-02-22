@@ -43,6 +43,10 @@ function Header() {
       slug:"/my-likes",
       active: isLogin
     },{
+      name:'My Comments',
+      slug:"/my-comments",
+      active: isLogin
+    },{
       name:'Sign-In',
       slug:"/sign-in",
       active: !isLogin //show this only when the user is not loggen in

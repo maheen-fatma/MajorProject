@@ -4,8 +4,9 @@ import dbService from '../backend/databases';
 import { useSelector } from 'react-redux';
 import parse from 'html-react-parser'
 import axios from 'axios';
-import {Button, PostManipulation, LikesDisplay} from '../components'
+import {Button, CommentDropdown, LikesDisplay} from '../components'
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaRegComment } from "react-icons/fa";
 const API_URL = import.meta.env.VITE_BACKEND_URL
 function Post() {
    
@@ -21,6 +22,9 @@ function Post() {
   const [isLiked, setIsLiked] = useState(false)
   const [numOfLikes, setNumOfLikes] = useState(0)
   const [likedUsers, setLikedUsers] = useState([])
+  const [numOfComments, setNumOfComments] = useState(0)
+  const [comments, setComments] = useState([])
+  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const userData = useSelector((state)=> state.auth.userInfo)
   //check if the post that is clicked belongs to the person logged in, for this it will check if the post and the userData exist, then also it will check if the userId parameter of the post is the id parameter of the userData
@@ -39,6 +43,17 @@ function Post() {
   const getLikeCount = async () => {
     try {
       const response = await axios.post(`${API_URL}/posts/${postId}/likes`, {}, {
+        withCredentials: true,
+      })
+      return response.data.data
+    } catch (error) {
+      console.error("Error fetching number of likes:", error);
+    }
+  }
+
+  const getComments = async () => {
+    try {
+      const response = await axios.post(`${API_URL}/posts/${postId}/comments`, {}, {
         withCredentials: true,
       })
       return response.data.data
@@ -91,6 +106,15 @@ function Post() {
             
           } catch (error) {
             console.error("Error fetching number of likes:", error);
+          }
+
+          //get the comment count and coments along with users who commented
+          try { 
+            const fetchedComments = await getComments()
+            setNumOfComments(fetchedComments.commentsCount)
+            setComments(fetchedComments.comments)
+          } catch (error) {
+            console.error("Error fetching comments:", error);
           }
         } else {
           navigate("/");
@@ -152,23 +176,38 @@ function Post() {
               </div>
               </div>
               <div className=' font-dolce text-lg pt-5'>{ post.content ? parse(post.content) : ""}</div>
-              <div className='flex items-center space-x-2 mt-7'>
-              <button 
-                className={`rounded-full transition ${
-                isLiked ? "text-red-700" : "text-slate-400 hover:text-red-700"
-                }`} 
-                onClick={likeToggle}
-              >
-              {isLiked ? (
-                <FaHeart fill="red" size={24} />
-                ) : (
-                <FaRegHeart size={24} />
-                )}
-              </button>
-              <div className=' font-dolce text-sm'>{numOfLikes}</div>
+              <div>
+                <div className="flex items-center space-x-4 mt-7">
+
+                  <div className='flex space-x-1'>
+                  <button 
+                    className={`rounded-full transition ${
+                      isLiked ? "text-red-700" : "text-slate-400 hover:text-red-700"
+                    }`} 
+                    onClick={likeToggle}
+                  >
+                    {isLiked ? <FaHeart fill="red" size={24} /> : <FaRegHeart size={24} />}
+                  </button>
+                  <div className="font-dolce text-sm">{numOfLikes}</div>
+                  </div>
+
+                  <div className="relative">
+                    <div className='flex space-x-1'>
+                    <button 
+                      className="text-slate-400 hover:text-blue-700 transition"
+                      onClick={() => setIsOpen(!isOpen)}
+                    >
+                      <FaRegComment size={24} />
+                    </button>
+                    <div className="font-dolce text-sm">{numOfComments}</div>
+                    </div>
+                    {isOpen && <CommentDropdown comments={comments} postId={postId} postOwnerId={post.owner._id} />}
+                  </div>
+
+                </div>
+                <LikesDisplay likedUsers={likedUsers} />
               </div>
-              <LikesDisplay likedUsers={likedUsers}/>
-                
+
           </div>
       </div>
     </div>

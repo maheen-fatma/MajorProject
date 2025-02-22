@@ -10,6 +10,7 @@ import PostPreview from "./PostPreview";
 import ChatAi from "./ChatAi";
 import NameLogo from "./NameLogo";
 import LikesDisplay from "./LikesDisplay"
+import CommentDropdown from "./CommentDropdown";
 
 export  {
     Header,
@@ -23,5 +24,6 @@ export  {
     PostPreview,
     ChatAi,
    NameLogo,
-   LikesDisplay
+   LikesDisplay,
+   CommentDropdown
 }

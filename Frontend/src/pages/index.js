@@ -11,6 +11,7 @@ import MyAcc from "./MyAcc";
 import EditPassword from "./EditPassword";
 import EditAvatar from "./EditAvatar";
 import MyLikes from "./MyLikes";
+import MyComments from "./MyComments";
 export  {
     Home,
     SignIn,
@@ -24,5 +25,6 @@ export  {
     MyAcc,
     EditPassword,
     EditAvatar,
-    MyLikes
+    MyLikes,
+    MyComments
 }

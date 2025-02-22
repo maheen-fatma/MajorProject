@@ -4,6 +4,7 @@ import {upload} from "../middleware/multer.middleware.js"
 import { verifyJWT } from "../middleware/auth.middleware.js";
 import { currentUserJWT } from "../middleware/currentUser.middleware.js";
 import { getLikedPostByUser } from "../controllers/like.controller.js";
+import { getMyComments } from "../controllers/comment.controller.js";
 const router = Router()
 router.route("/register").post(
     upload.single('avatar'), // Single file upload
@@ -16,4 +17,5 @@ router.route("/current-user").get(currentUserJWT, getCurrentUser)
 router.route("/update").patch(verifyJWT, updateAccountDetails) 
 router.route("/update-avatar").patch(verifyJWT, upload.single("avatar"), updateUserAvatar) 
 router.route("/my-likes").get(verifyJWT, getLikedPostByUser)//posts that the user has liked
+router.route("/my-comments").get(verifyJWT,getMyComments)//gets the coments made by logged in user
 export default router;

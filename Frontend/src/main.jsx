@@ -5,7 +5,7 @@ import './index.css'
 import { Provider } from 'react-redux'
 import { store } from './store/store.js'
 import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route} from 'react-router-dom'
-import { Home, SignUp, SignIn, AddPost, Post, EditPost, MyPosts, AskAi, MyAcc, EditPassword, EditAvatar, MyLikes } from './pages'
+import { Home, SignUp, SignIn, AddPost, Post, EditPost, MyPosts, AskAi, MyAcc, EditPassword, EditAvatar, MyLikes, MyComments } from './pages'
 
 
 const router = createBrowserRouter(
@@ -21,6 +21,7 @@ const router = createBrowserRouter(
       <Route path='my-post' element={<MyPosts/>} />
       <Route path='ask-ai' element={<AskAi/>}/>
       <Route path='my-likes' element={<MyLikes/>}/>
+      <Route path='my-comments' element={<MyComments/>}/>
       <Route path='my-account' element={<MyAcc/>}>
         <Route path='edit-password' element={<EditPassword/>} />
         <Route path='edit-avatar' element={<EditAvatar/>} />

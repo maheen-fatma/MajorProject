@@ -111,6 +111,12 @@ function MyAcc() {
             >
                 My Likes
             </Link>
+            <Link 
+                to="/my-comments" 
+                className='transition duration-500 hover:bg-buttons1 py-3 px-6 bg-gray-50'
+            >
+                My Comments
+            </Link>
             <SignoutBtn />
         </div>
 
