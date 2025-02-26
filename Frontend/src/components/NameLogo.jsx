@@ -26,7 +26,7 @@ function NameLogo() {
        <img 
         src={userData?.avatar || "https://images.app.goo.gl/sBEav9PTRMLRsCpF7"} 
         alt={userData?.fullName || "User Avatar"} 
-        className="rw-full h-full object-fill rounded-full"
+        className="rw-full h-full  rounded-full object-cover"
     />
     </button>
    

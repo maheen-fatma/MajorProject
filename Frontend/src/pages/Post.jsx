@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import dbService from '../backend/databases';
+import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import parse from 'html-react-parser'
 import axios from 'axios';
@@ -172,7 +173,9 @@ function Post() {
                   alt="User Avatar" 
                   className="w-6 h-6 rounded-full object-cover mr-2" 
                 />
-                <div className="text-sm">{post.owner.username}</div>
+                <div >
+                <Link to={`/userDetails/${post.owner._id}`} className="text-lg font-dolceBold font-medium text-gray-700 hover:underline hover:text-blue-500 transition duration-200">@{post.owner.username}</Link>
+                </div>
               </div>
               </div>
               <div className=' font-dolce text-lg pt-5'>{ post.content ? parse(post.content) : ""}</div>
