@@ -179,6 +179,7 @@ function Post() {
               </div>
               </div>
               <div className=' font-dolce text-lg pt-5'>{ post.content ? parse(post.content) : ""}</div>
+              {/* Hashtags */}
               <div>
                 <div className="flex items-center space-x-4 mt-7">
 

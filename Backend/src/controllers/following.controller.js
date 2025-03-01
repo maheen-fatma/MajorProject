@@ -30,7 +30,23 @@ const isFollowing = asyncHandler (async(req,res)=>{
     return res.status(200).json(new ApiResponse(200, false, "not following"));
 })
 
+const fetchFollowers = asyncHandler (async(req,res)=>{
+    const {userId} = req.params
+    const followers = await Following.find({followed: userId}).populate("follower", "username fullName")
+    const followerCount = followers.length
+    return res.status(200).json(new ApiResponse(200, { followerCount, followers }, "Followers fetched successfully."));
+})
+
+const fetchFollowing = asyncHandler (async(req,res)=>{
+    const {userId} = req.params
+    const following = await Following.find({follower: userId}).populate("followed", "username fullName")
+    const followingCount = following.length
+    return res.status(200).json(new ApiResponse(200, { followingCount, following }, "Following fetched successfully."));
+})
+
 export {
     followToggle,
-    isFollowing
+    isFollowing,
+    fetchFollowers,
+    fetchFollowing
 }
