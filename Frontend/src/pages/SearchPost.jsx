@@ -21,7 +21,7 @@ function SearchPost() {
     },[])
     
 
-  return (
+  return posts.length>0 ? (
     <div className=' px-10 p-[20px] '>
 
       <ResponsiveMasonry columnsCountBreakPoints={{350: 2, 750: 3, 900: 4}}>
@@ -33,6 +33,10 @@ function SearchPost() {
       ))}
         </Masonry>
       </ResponsiveMasonry>
+    </div>
+  ) : (
+    <div className='p-10 font-dolce text-2xl'>
+      No such post exist <br /> Be the first one to post about '{`${searchTerm}`}'
     </div>
   )
 }

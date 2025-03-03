@@ -3,17 +3,21 @@ import { useDispatch } from "react-redux"
 import authService from "./backend/auth"
 import { login, logout } from "./store/authSlice"
 import {Header, Layout, Logo} from "./components"
-
+import { useSelector } from "react-redux"
 function App() {
 
   //a loading state which would be set false when the user is either fetched or not fetched
   //use loading state to show "Loading..." message while the data is being fetched from appwrite auth service
   const [loading, setLoading] = useState(true)
   const dispatch = useDispatch();
-  
+  const isLogin = useSelector((state) => state.auth.status);
 
   useEffect(()=>{
-    
+    if(!isLogin){
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000); // 3 seconds delay
+    } else {
       authService.getLoggedInUser()
       .then( (userInfo) => { // if there is a user then run the login reducer form the store which causes the login status to be true
         
@@ -24,7 +28,6 @@ function App() {
           dispatch(logout()) //else false the login sttaus
         }
       } )
-      .catch(error => console.error("Error fetching user:", error))
       .finally( () =>  //finally after all this, set loading as false to stop showing 
       {
         // Introduce a delay before setting loading to false
@@ -32,7 +35,7 @@ function App() {
           setLoading(false);
         }, 1000); // 3 seconds delay
       }
-      )
+      ) }
   },[])
   
   //conditional rendering as per loading

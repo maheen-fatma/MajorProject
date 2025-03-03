@@ -21,12 +21,22 @@ function Header() {
           if (!searchTerm.trim()) return;
           try {
             const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/search/user?query=${searchTerm}`,{withCredentials: true});
-            setSearchedUser(response.data.data);
+            const userData = response.data.data;
+
+            if (userData.length > 0) {
+              navigate(`/userDetails/${userData[0]._id}`);
+            } else {
+              setSearchTerm("");
+            }
+
+            setSearchedUser(userData);
         } catch (error) {
             console.error("Search error:", error);
         }
-        if(searchedUser){
+        if(searchedUser[0]){
         navigate(`userDetails/${searchedUser[0]._id}`)
+      } else {
+        setSearchTerm("")
       }
       };
   useEffect(()=>{
