@@ -3,10 +3,21 @@ import { PostPreview } from '../components'
 import dbService from '../backend/databases'
 import Masonry, {ResponsiveMasonry} from 'react-responsive-masonry'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { useNavigate } from 'react-router-dom'
+import { FaSearch } from 'react-icons/fa';
 
 function AllPosts() {
     const [posts , setPosts] = useState([])
     const [hasMore, setHasMore] = useState(true)
+    const [searchTerm, setSearchTerm] = useState("");
+    const navigate = useNavigate()
+
+    const handleSearch = async (e) => {
+        e.preventDefault();
+        if (!searchTerm.trim()) return;
+        navigate(`/search/${searchTerm}`)
+
+    };
     useEffect(()=>{
       loadPosts()      
     },[])
@@ -23,6 +34,17 @@ function AllPosts() {
     }
   return (
     <div className=' px-10 p-[20px] '>
+      <form onSubmit={handleSearch} className="flex mb-10 font-dolce">
+      <button type="submit" className=" bg-customMaroon hover:bg-red-900 text-white p-3 rounded-s-3xl"><FaSearch/></button>
+            <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search posts..."
+                className="border p-3 w-full rounded-e-3xl"
+            />
+            
+      </form>
       <InfiniteScroll
                 dataLength={posts.length}
                 next={loadPosts}

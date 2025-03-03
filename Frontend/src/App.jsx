@@ -10,19 +10,21 @@ function App() {
   //use loading state to show "Loading..." message while the data is being fetched from appwrite auth service
   const [loading, setLoading] = useState(true)
   const dispatch = useDispatch();
+  
 
   useEffect(()=>{
     
       authService.getLoggedInUser()
       .then( (userInfo) => { // if there is a user then run the login reducer form the store which causes the login status to be true
         
-        if(userInfo.data){
+        if(userInfo?.data){
           dispatch(login({userInfo}))
         }
         else {
           dispatch(logout()) //else false the login sttaus
         }
       } )
+      .catch(error => console.error("Error fetching user:", error))
       .finally( () =>  //finally after all this, set loading as false to stop showing 
       {
         // Introduce a delay before setting loading to false

@@ -5,12 +5,30 @@ import { Logo, NameLogo } from './index'
 import SignoutBtn from './SignoutBtn';
 import { useDispatch } from 'react-redux';
 import { change } from '../store/themeSlice';
-import { FaSun, FaMoon } from 'react-icons/fa';
+import { FaSun, FaMoon, FaSearch } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function Header() {
   const isLogin = useSelector((state) => state.auth.status); //this line see the userlogin status
   const [theme , setTheme] = useState("light");
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchedUser, setSearchedUser] = useState("")
+      const handleSearch = async (e) => {
+          e.preventDefault();
+          if (!searchTerm.trim()) return;
+          try {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/search/user?query=${searchTerm}`,{withCredentials: true});
+            setSearchedUser(response.data.data);
+        } catch (error) {
+            console.error("Search error:", error);
+        }
+        if(searchedUser){
+        navigate(`userDetails/${searchedUser[0]._id}`)
+      }
+      };
   useEffect(()=>{
     document.querySelector('html').classList.remove('light','dark')
     document.querySelector('html').classList.add(theme)
@@ -87,6 +105,25 @@ function Header() {
             Ask AI
           </li>
         </NavLink>
+        <form 
+            onSubmit={handleSearch} 
+            className="flex items-center border border-gray dark:border-whiteBg rounded-3xl overflow-hidden bg-white dark:bg-gray-800 px-4 mr-2"
+        >
+            <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search username..."
+                className=" w-48 md:w-60 bg-transparent text-customMaroon dark:text-whiteBg outline-none"
+            />
+            <button 
+                type="submit" 
+                className=" text-gray-500 dark:text-white rounded-e-3xl hover:bg-opacity-80"
+            >
+                <FaSearch />
+            </button>
+        </form>
+
         {
           isLogin && 
           

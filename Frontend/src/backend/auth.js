@@ -3,7 +3,7 @@ import axios from "axios"
 const API_URL = import.meta.env.VITE_BACKEND_URL
 
 export class AuthService {
-
+    
     async createAccount(formData){
         try {
             const response = await axios.post(`${API_URL}/users/register`, formData, {
@@ -16,6 +16,7 @@ export class AuthService {
     }
 
     async  getLoggedInUser() {
+        
         try {
           const response = await axios.get(`${API_URL}/users/current-user`, { withCredentials: true });
           return response.data

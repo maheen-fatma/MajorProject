@@ -13,6 +13,7 @@ import EditAvatar from "./EditAvatar";
 import MyLikes from "./MyLikes";
 import MyComments from "./MyComments";
 import UserDetails from "./UserDetails";
+import SearchPost from "./SearchPost";
 export  {
     Home,
     SignIn,
@@ -28,5 +29,6 @@ export  {
     EditAvatar,
     MyLikes,
     MyComments,
-    UserDetails
+    UserDetails,
+    SearchPost
 }
