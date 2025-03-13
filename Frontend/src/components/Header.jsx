@@ -115,7 +115,7 @@ function Header() {
             Ask AI
           </li>
         </NavLink>
-        <form 
+        {isLogin && <form 
             onSubmit={handleSearch} 
             className="flex items-center border border-gray dark:border-whiteBg rounded-3xl overflow-hidden bg-white dark:bg-gray-800 px-4 mr-2"
         >
@@ -132,7 +132,7 @@ function Header() {
             >
                 <FaSearch />
             </button>
-        </form>
+        </form>}
 
         {
           isLogin && 

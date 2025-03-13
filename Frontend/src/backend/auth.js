@@ -6,7 +6,9 @@ export class AuthService {
     
     async createAccount(formData){
         try {
-            const response = await axios.post(`${API_URL}/users/register`, formData, {
+            const response = await axios.post(
+                `${API_URL}/users/register`, 
+                formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             return response.data;

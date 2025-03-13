@@ -1,6 +1,8 @@
 import {asyncHandler} from "../utils/asyncHandler.js"
 import {ApiError} from "../utils/ApiError.js"
 import { Post } from "../models/post.model.js"
+import { Comment } from "../models/comment.model.js"
+import { Like } from "../models/like.model.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js";
 import { v2 as cloudinary} from 'cloudinary'
@@ -99,6 +101,11 @@ const deletePost = asyncHandler( async (req,res)=>{
     if(!post){
         throw new ApiError(404, "Post not found")
     }
+    // Delete all comments associated with this post
+    await Comment.deleteMany({ associatedPost: id });
+
+    // Delete all likes associated with this post
+    await Like.deleteMany({ associatedPost: id });
 
     await Post.findByIdAndDelete(id)
 

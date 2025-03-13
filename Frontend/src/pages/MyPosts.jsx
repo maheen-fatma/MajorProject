@@ -9,7 +9,7 @@ function MyPosts() {
   const [posts, setPosts] = useState([])
   const userData = useSelector((state)=>(state.auth.userInfo))
   useEffect(()=>{
-    dbService.getAllPost(userData._id).then((newPosts)=>{
+    dbService.getAllPost(userData?._id).then((newPosts)=>{
       if(newPosts)
         setPosts(newPosts)
 
