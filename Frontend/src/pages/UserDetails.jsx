@@ -2,7 +2,10 @@ import axios from 'axios';
 import React, { useState } from 'react'
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { PostPreview } from '../components'
 import { useNavigate } from 'react-router-dom';
+import dbService from '../backend/databases'
+import Masonry, {ResponsiveMasonry} from 'react-responsive-masonry'
 //this displays the details of a specific user whose userid is extracted from useParams as userId
 function UserDetails() {
   const [avatar, setAvatar] = useState("")
@@ -16,6 +19,7 @@ function UserDetails() {
   const [followerCount, setFollowerCount] = useState(0)
   const [followingCount, setFollowingCount] = useState(0)
   const [isFollowing, setIsFollowing] = useState(false)
+  const [posts, setPosts] = useState([])
   const {userId} = useParams();
 
 const navigate = useNavigate();
@@ -48,13 +52,21 @@ const handleClick = (id) => {
     setFollowerCount(response1.data.data.followerCount)
     setFollowingCount(response2.data.data.followingCount)
   }
+  const fetchPosts = async () => {
+    dbService.getAllPost(userId)
+        .then((newPosts) => {
+            setPosts(newPosts)  
+          })
+    
+  };
     useEffect(()=>{
       getDetails()
       getIsFollowing()
       getFollowersAndFollowing()
+      fetchPosts();
     },[userId])
   return (
-    <div className="max-w-md mx-auto bg-white shadow-lg rounded-lg p-6 mt-10 text-center">
+    <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-10 text-center">
       {/* Avatar */}
       <img 
         src={avatar} 
@@ -138,7 +150,29 @@ const handleClick = (id) => {
           )}
         </div>
       )}
+      {/* Posts */}
+        <div className="mt-6">
+        <h3 className="text-lg font-semibold mb-2">Posts</h3>
+        {posts.length > 0 ? (
+          <div className="grid grid-cols-1 gap-4">
+           
+            <ResponsiveMasonry columnsCountBreakPoints={{350: 2, 750: 3, 900: 4}}>
+              <Masonry gutter="25px">
+            {posts && posts.map((item,index)=>(
+              <div key={index} className=' '>
+                  <PostPreview {...item} />
+              </div>
+            ))}
+              </Masonry>
+            </ResponsiveMasonry>
+            
+          </div>
+        ) : (
+          <p className="text-gray-500">No posts available.</p>
+        )}
+      </div>
     </div>
+    
   )
 }
 
