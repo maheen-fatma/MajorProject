@@ -9,6 +9,7 @@ import { FaSearch } from 'react-icons/fa';
 function AllPosts() {
     const [posts , setPosts] = useState([])
     const [hasMore, setHasMore] = useState(true)
+    const [page, setPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate()
 
@@ -23,13 +24,15 @@ function AllPosts() {
     },[])
 
     const loadPosts = () => {
-      dbService.getAllPost()
+      dbService.getAllPost(null, page)
         .then((newPosts) => {
-          if (newPosts.length > 0)
+          if (newPosts.length > 0){
             setPosts((prevPosts) => [...prevPosts, ...newPosts])  // Directly use the array
+            setPage((prevPage) => prevPage + 1);  // Increment page after loading posts
+          }
           else
             setHasMore(false) // Stop loading when no more posts
-  })
+  }).catch(() => setHasMore(false));
         
     }
   return (

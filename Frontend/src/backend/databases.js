@@ -52,10 +52,10 @@ export class DatabaseService{
         }
     }
     
-    async getAllPost (owner){ //send the owner id as getAllPost(here)
+    async getAllPost (owner, page =1, limit=15){ //send the owner id as getAllPost(here)
         try {
             const response = await axios.get(`${API_URL}/posts/view-posts`, {
-                params: owner ? {owner} : {},
+                params: owner ? {owner, page, limit} : { page, limit },
                 withCredentials: true
             })
             

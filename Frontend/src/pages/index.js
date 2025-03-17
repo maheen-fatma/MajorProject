@@ -14,6 +14,7 @@ import MyLikes from "./MyLikes";
 import MyComments from "./MyComments";
 import UserDetails from "./UserDetails";
 import SearchPost from "./SearchPost";
+import FollowingPost from "./FollowingPost";
 export  {
     Home,
     SignIn,
@@ -30,5 +31,6 @@ export  {
     MyLikes,
     MyComments,
     UserDetails,
-    SearchPost
+    SearchPost,
+    FollowingPost
 }

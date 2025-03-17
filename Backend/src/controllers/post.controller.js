@@ -2,6 +2,7 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 import {ApiError} from "../utils/ApiError.js"
 import { Post } from "../models/post.model.js"
 import { Comment } from "../models/comment.model.js"
+import {Following} from "../models/following.model.js"
 import { Like } from "../models/like.model.js"
 import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js";
@@ -18,9 +19,12 @@ import { v2 as cloudinary} from 'cloudinary'
 //view all post / posts by giving a specific owner 
 const viewPosts = asyncHandler(async(req,res)=>{
     
-        const {owner} = req.query // send the _id of the user whose post you like to view OR send no parameter to view all posts
+        const {owner, page =1, limit =15} = req.query // send the _id of the user whose post you like to view OR send no parameter to view all posts
         const query = owner? {owner}: {}
-        const posts = await Post.find(query).select("title imageFile");
+        const posts = await Post.find(query)
+        .select("title imageFile")
+        .skip((page-1) * limit)
+        .limit(Number(limit));
         if(!owner)
             return res.status(200).json(new ApiResponse(200, posts, "All posts viewed successully"))
         else
@@ -112,10 +116,44 @@ const deletePost = asyncHandler( async (req,res)=>{
     return res.status(200).json(new ApiResponse(200, null, "Post deleted successfully"));
 })
 
+const getFollowingPosts = asyncHandler(async (req, res) => {
+    try {
+        
+        const userId = req.user._id; // Assuming user ID is available from JWT
+        const { page = 1, limit = 15 } = req.query;
+
+        
+        // Get the list of users the logged-in user follows
+        const following = await Following.find({ follower: userId }).select("followed");
+        const followedUsers = following.map(f => f.followed);
+        
+        if (followedUsers.length === 0) {
+            return res.status(200).json({ posts: [], hasMore: false, message: "No posts to show." });
+        }
+
+        // Get posts from followed users, sorted by creation time (latest first)
+        const posts = await Post.find({ owner: { $in: followedUsers } })
+            .sort({ createdAt: -1 }) // Newest posts first
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit));
+
+        const totalPosts = await Post.countDocuments({ owner: { $in: followedUsers } });
+
+        res.status(200).json({
+            posts,
+            hasMore: totalPosts > page * limit,
+            message: "Following posts fetched successfully"
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to fetch following posts" });
+    }
+});
+
 export {
     viewPosts,
     uploadPost,
     editPost,
     getPostById,
-    deletePost
+    deletePost,
+    getFollowingPosts
 }

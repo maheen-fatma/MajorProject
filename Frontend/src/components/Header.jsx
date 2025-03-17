@@ -56,6 +56,10 @@ function Header() {
   const navItems = [
     {
       name:'Home',
+      slug:"/following-posts",
+      active: isLogin 
+    },{
+      name: 'All Posts',
       slug:"/",
       active: true //always visible irrespective of the fact user is logged in or not
     },{

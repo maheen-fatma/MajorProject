@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { PostPreview } from '../components'
 import { useNavigate } from 'react-router-dom';
+import InfiniteScroll from 'react-infinite-scroll-component'
 import dbService from '../backend/databases'
 import Masonry, {ResponsiveMasonry} from 'react-responsive-masonry'
 //this displays the details of a specific user whose userid is extracted from useParams as userId
@@ -20,6 +21,8 @@ function UserDetails() {
   const [followingCount, setFollowingCount] = useState(0)
   const [isFollowing, setIsFollowing] = useState(false)
   const [posts, setPosts] = useState([])
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true);
   const {userId} = useParams();
 
 const navigate = useNavigate();
@@ -53,16 +56,25 @@ const handleClick = (id) => {
     setFollowingCount(response2.data.data.followingCount)
   }
   const fetchPosts = async () => {
-    dbService.getAllPost(userId)
+    dbService.getAllPost(userId, page)
         .then((newPosts) => {
-            setPosts(newPosts)  
+            if(newPosts.length >0){
+              setPosts((prevPosts) => [...prevPosts, ...newPosts])
+              setPage((prevPage) => prevPage + 1);
+            }  else {
+              setHasMore(false);
+            }
           })
+          .catch(() => setHasMore(false));    
     
   };
     useEffect(()=>{
       getDetails()
       getIsFollowing()
       getFollowersAndFollowing()
+      setPosts([]); // Reset posts when userId changes
+      setPage(1);
+      setHasMore(true);
       fetchPosts();
     },[userId])
   return (
@@ -154,22 +166,21 @@ const handleClick = (id) => {
         <div className="mt-6">
         <h3 className="text-lg font-semibold mb-2">Posts</h3>
         {posts.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4">
-           
-            <ResponsiveMasonry columnsCountBreakPoints={{350: 2, 750: 3, 900: 4}}>
+          <InfiniteScroll dataLength={posts.length} next={fetchPosts} hasMore={hasMore} loader={<h4>Loading posts...</h4>} >
+            <ResponsiveMasonry columnsCountBreakPoints={{ 350: 2, 750: 3, 900: 4 }}>
               <Masonry gutter="25px">
-            {posts && posts.map((item,index)=>(
-              <div key={index} className=' '>
-                  <PostPreview {...item} />
-              </div>
-            ))}
+                {posts.map((item, index) => (
+                  <div key={index}>
+                    <PostPreview {...item} />
+                  </div>
+                ))}
               </Masonry>
             </ResponsiveMasonry>
-            
-          </div>
+          </InfiniteScroll>
         ) : (
           <p className="text-gray-500">No posts available.</p>
         )}
+
       </div>
     </div>
     
