@@ -20,7 +20,8 @@ function AllPosts() {
 
     };
     useEffect(()=>{
-      loadPosts(page)      
+      loadPosts(1)
+      setPage(2)     
     },[])
 
     const loadPosts = (currentPage) => {

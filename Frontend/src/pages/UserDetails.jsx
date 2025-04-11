@@ -59,7 +59,11 @@ const handleClick = (id) => {
     dbService.getAllPost(userId, page)
         .then((newPosts) => {
             if(newPosts.length >0){
-              setPosts((prevPosts) => [...prevPosts, ...newPosts])
+              setPosts((prevPosts) => {
+                const existingIds = new Set(prevPosts.map(p => p.$id));
+                const filteredNew = newPosts.filter(p => !existingIds.has(p.$id));
+                return [...prevPosts, ...filteredNew];
+              });
               setPage((prevPage) => prevPage + 1);
             }  else {
               setHasMore(false);
@@ -68,6 +72,7 @@ const handleClick = (id) => {
           .catch(() => setHasMore(false));    
     
   };
+  
     useEffect(()=>{
       getDetails()
       getIsFollowing()
