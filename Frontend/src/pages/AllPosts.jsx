@@ -20,15 +20,15 @@ function AllPosts() {
 
     };
     useEffect(()=>{
-      loadPosts()      
+      loadPosts(page)      
     },[])
 
-    const loadPosts = () => {
-      dbService.getAllPost(null, page)
+    const loadPosts = (currentPage) => {
+      dbService.getAllPost(null, currentPage)
         .then((newPosts) => {
           if (newPosts.length > 0){
             setPosts((prevPosts) => [...prevPosts, ...newPosts])  // Directly use the array
-            setPage((prevPage) => prevPage + 1);  // Increment page after loading posts
+            setPage(currentPage+1);  // Increment page after loading posts
           }
           else
             setHasMore(false) // Stop loading when no more posts
@@ -50,7 +50,7 @@ function AllPosts() {
       </form>
       <InfiniteScroll
                 dataLength={posts.length}
-                next={loadPosts}
+                next={() => loadPosts(page)}
                 hasMore={hasMore}
                 loader={<h4 className=' font-dolce text-2xl tracking-wider'>Loading posts...</h4>}
                 endMessage={<p>No more posts</p>}

@@ -164,9 +164,14 @@ function Post() {
               <h1 className=' text-3xl font-dolceBold tracking-wider'>{post.title}</h1>
               <div className=' font-dolce text-sm pt-5 mt-1 '>
                 Buy:
-              <a href={post.purchaseLink} target="_blank" rel="noopener noreferrer" className=' font-dolce text-sm pt-5 underline text-blue-500 ml-1'>
-                  {post.purchaseLink}
-              </a>
+                <a 
+                  href={post.purchaseLink} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="font-dolce text-sm pt-5 underline text-blue-500 ml-1"
+                >
+                  {new URL(post.purchaseLink).hostname.replace("www.", "").split(".")[0]} 🔗
+                </a>
               <div className="flex items-center mt-2">
                 <img 
                   src={post.owner.avatar} 
