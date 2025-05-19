@@ -16,10 +16,18 @@ function SignUp() {
   const handleFileChange = (e) => {
     setAvatar(e.target.files[0]);
   };
+  function isUsernameValid(username) {
+  const usernameRegex = /^[a-zA-Z0-9_]{3,15}$/;
+  return usernameRegex.test(username);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (!isUsernameValid(username)) {
+    setError('Invalid username. Must be 3-15 chars, letters, numbers, or underscore only.');
+    return; // stop submission if invalid
+  }
     try {
       const formData = new FormData();
       formData.append('fullName', fullName);
@@ -36,6 +44,7 @@ function SignUp() {
       setError(error.message || 'Something went wrong. Please try again.');
     }
   };
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-zinc-100 to-zinc-300">
